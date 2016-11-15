@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html ng-app="car">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="https://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<style>
+	.active{
+		display: block;
+	}
+</style>
+	</head>
+<body ng-controller="mainCtrl" >		
+<nav class="navbar navbar-inverse" role="navigation">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+    
+      <a class="navbar-brand" href="#">Brand</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">   
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown" ng-init="show=false">
+          <a ng-click="show=!show;stop($event)" href="#" class="dropdown-toggle">
+          	购物车<span class="caret"></span></a>
+          <ul ng-click="stop($event)" ng-class="{active:show}" class="dropdown-menu" >
+            <li ng-repeat="v in cars"><a href="#">
+            	<span>{{v.name}}</span>
+            	<span>{{v.num}}</span>
+            	<span>{{v.num*v.price}}</span>
+            	<span ng-click="jia($index)" class="glyphicon glyphicon-plus"></span>
+            	<span ng-click="jian($index)" class="glyphicon glyphicon-minus"></span>
+            	<span ng-click="remove($index)">删除</span>
+            </a></li>
+            <li>
+            	<a href="#" ng-if="total()!==0">
+            		{{total()}}
+            	</a>
+            	<a href="#" ng-if="total()==0">
+            		亲，购物车空了！
+            	</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+<hr / >
+<div class="container">	
+<div class="row" id="goods">
+  <div class="col-sm-3 " ng-repeat="v in goods">
+    <div class="thumbnail">
+      <div class="caption" >
+        <h3>{{v.name}}</h3>
+        <p>{{v.price}}</p>
+        <p><a href="#" ng-click="add2Car($index);stop($event)" class="btn btn-primary" role="button">加入购物车</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+	</body>
+	<script>
+		var app=angular.module('car',[]);
+		app.controller('mainCtrl',['$scope',function($scope){
+			$scope.goods=[
+			{id:1001,name:'洗衣机',price:1000},
+			{id:1002,name:'电视',price:1400},
+			{id:1003,name:'冰箱',price:1600},
+			{id:1004,name:'电脑',price:3000}
+		];
+		$scope.cars=[
+			{id:1001,name:'洗衣机',price:1000,num:2},
+			{id:1003,name:'冰箱',price:1600,num:3}
+		];
+		////////////////////////////////////////////////////////////
+//		总价
+		$scope.total=function(){
+			var r=0;
+			for(var i=0;i<$scope.cars.length;i++){
+				r+=$scope.cars[i].price*$scope.cars[i].num
+			}
+			return r;
+		}
+//		添加商品
+		$scope.add2Car=function(index){
+			var v=$scope.goods[index];
+			var m=hasId(v.id);
+			if(m!==-1){
+				$scope.cars[m].num+=1;
+			}else{
+				v.num=1;
+				$scope.cars.push(v);
+			}
+		}
+		$scope.remove=function(index){
+			$scope.cars.splice(index,1)
+		}
+		function hasId(id){
+			for(var i=0;i<$scope.cars.length;i++){
+				if($scope.cars[i].id===id){
+					return i;
+				}
+			}
+			return -1;
+		}
+			$scope.stop=function(e){
+				e.stopPropagation()
+			};
+			$scope.jia=function(index){
+				var v=$scope.cars[index];
+				v.num+=1;
+			}
+			$scope.jian=function(index){
+				var v=$scope.cars[index];
+				v.num-=1;
+				if(v.num==0){
+					$scope.cars.splice(index,1);
+				}
+			}
+		}])
+	</script>
+</html>
